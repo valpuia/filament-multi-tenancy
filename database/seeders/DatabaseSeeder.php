@@ -16,6 +16,8 @@ class DatabaseSeeder extends Seeder
         $user = \App\Models\User::factory()->create([
             'name' => 'Admin',
             'email' => 'admin@mail.com',
+            'is_admin' => true,
+            'is_team_owner' => true,
         ]);
 
         $team = Team::create([

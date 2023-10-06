@@ -28,6 +28,8 @@ class User extends Authenticatable implements FilamentUser, HasTenants
         'name',
         'email',
         'password',
+        'is_team_owner',
+        'is_admin',
     ];
 
     /**
@@ -48,6 +50,8 @@ class User extends Authenticatable implements FilamentUser, HasTenants
     protected $casts = [
         'email_verified_at' => 'datetime',
         'password' => 'hashed',
+        'is_team_owner' => 'boolean',
+        'is_admin' => 'boolean',
     ];
 
     public function canAccessPanel(Panel $panel): bool

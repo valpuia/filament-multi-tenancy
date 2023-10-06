@@ -9,6 +9,7 @@ use App\Models\Team;
 use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\DisableBladeIconComponents;
 use Filament\Http\Middleware\DispatchServingFilamentEvent;
+use Filament\Navigation\MenuItem;
 use Filament\Pages;
 use Filament\Panel;
 use Filament\PanelProvider;
@@ -64,6 +65,13 @@ class AdminPanelProvider extends PanelProvider
                 ApplyTenantScopes::class,
             ], isPersistent: true)
             ->tenantRegistration(RegisterTeam::class)
-            ->tenantProfile(EditTeamProfile::class);
+            ->tenantProfile(EditTeamProfile::class)
+            ->tenantMenuItems([
+                'profile' => MenuItem::make()
+                    ->visible(fn (): bool => auth()->user()->is_team_owner),
+
+                'register' => MenuItem::make()
+                    ->visible(fn (): bool => auth()->user()->is_team_owner && auth()->user()->is_admin),
+            ]);
     }
 }

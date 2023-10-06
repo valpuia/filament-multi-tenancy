@@ -2,8 +2,9 @@
 
 namespace Database\Seeders;
 
-// use Illuminate\Database\Console\Seeds\WithoutModelEvents;
+use App\Models\Team;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\DB;
 
 class DatabaseSeeder extends Seeder
 {
@@ -12,11 +13,21 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        // \App\Models\User::factory(10)->create();
-
-        \App\Models\User::factory()->create([
+        $user = \App\Models\User::factory()->create([
             'name' => 'Admin',
             'email' => 'admin@mail.com',
+        ]);
+
+        $team = Team::create([
+            'name' => 'Admin',
+            'slug' => 'admin',
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
+
+        DB::table('team_user')->insert([
+            'team_id' => $team->id,
+            'user_id' => $user->id,
         ]);
     }
 }

@@ -13,8 +13,9 @@ return new class extends Migration
     {
         Schema::create('teams', function (Blueprint $table) {
             $table->id();
-            $table->string('name');
-            $table->boolean('active')->default(0);
+            $table->string('name')->unique();
+            $table->string('slug')->unique();
+            $table->boolean('active')->default(1);
             $table->timestamps();
         });
     }

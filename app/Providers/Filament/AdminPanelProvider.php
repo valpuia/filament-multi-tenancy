@@ -60,7 +60,6 @@ class AdminPanelProvider extends PanelProvider
                 Authenticate::class,
             ])
             ->tenant(Team::class, slugAttribute: 'slug')
-            ->tenantRoutePrefix('team')
             ->tenantMiddleware([
                 ApplyTenantScopes::class,
             ], isPersistent: true)

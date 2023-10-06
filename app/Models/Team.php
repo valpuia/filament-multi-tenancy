@@ -2,22 +2,16 @@
 
 namespace App\Models;
 
-use Filament\Models\Contracts\HasCurrentTenantLabel;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
-class Team extends Model implements HasCurrentTenantLabel
+class Team extends Model
 {
     use HasFactory;
 
     protected $guarded = ['id'];
-
-    public function getCurrentTenantLabel(): string
-    {
-        return 'Active team';
-    }
 
     public function priorities(): HasMany
     {

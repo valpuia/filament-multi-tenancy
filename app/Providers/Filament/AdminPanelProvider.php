@@ -2,6 +2,8 @@
 
 namespace App\Providers\Filament;
 
+use App\Filament\Pages\Tenancy\EditTeamProfile;
+use App\Filament\Pages\Tenancy\RegisterTeam;
 use App\Http\Middleware\ApplyTenantScopes;
 use App\Models\Team;
 use Filament\Http\Middleware\Authenticate;
@@ -60,6 +62,8 @@ class AdminPanelProvider extends PanelProvider
             ->tenantRoutePrefix('team')
             ->tenantMiddleware([
                 ApplyTenantScopes::class,
-            ], isPersistent: true);
+            ], isPersistent: true)
+            ->tenantRegistration(RegisterTeam::class)
+            ->tenantProfile(EditTeamProfile::class);
     }
 }

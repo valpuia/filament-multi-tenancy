@@ -19,10 +19,7 @@ class Tenants extends Page implements HasTable
 
     protected static string $view = 'filament.pages.tenants';
 
-    public static function shouldRegisterNavigation(): bool
-    {
-        return false;
-    }
+    protected static bool $shouldRegisterNavigation = false;
 
     public function mount(): void
     {

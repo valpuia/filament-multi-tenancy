@@ -1,5 +1,6 @@
 <?php
 
+use App\Models\Team;
 use App\Models\User;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
@@ -16,6 +17,7 @@ return new class extends Migration
             $table->id();
             $table->string('title')->default('Requesting to join new team!');
             $table->foreignIdFor(User::class);
+            $table->foreignIdFor(Team::class)->default(1);
             $table->timestamps();
         });
     }

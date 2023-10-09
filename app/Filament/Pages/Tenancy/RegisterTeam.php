@@ -3,6 +3,7 @@
 namespace App\Filament\Pages\Tenancy;
 
 use App\Models\Team;
+use App\Models\TenantRequest;
 use Filament\Forms\Components\Checkbox;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
@@ -15,6 +16,21 @@ use Illuminate\Support\Str;
 
 class RegisterTeam extends RegisterTenant
 {
+    public $isAlreadyRequested = false;
+
+    public function mount(): void
+    {
+        abort_unless(static::canView(), 404);
+
+        $this->form->fill();
+
+        $req = TenantRequest::where('user_id', auth()->id())->first();
+
+        if ($req) {
+            $this->isAlreadyRequested = true;
+        }
+    }
+
     protected static string $view = 'filament.pages.tenancy.register-team';
 
     public static function getLabel(): string
@@ -87,5 +103,19 @@ class RegisterTeam extends RegisterTenant
     protected function getRedirectUrl(): ?string
     {
         return route('filament.admin.tenant');
+    }
+
+    public function requestToJoinNewTeam()
+    {
+        TenantRequest::create([
+            'user_id' => auth()->id(),
+        ]);
+
+        Notification::make()
+            ->title('Joining request has been submitted')
+            ->success()
+            ->send();
+
+        $this->isAlreadyRequested = true;
     }
 }

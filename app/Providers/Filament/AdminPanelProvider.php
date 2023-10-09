@@ -72,13 +72,12 @@ class AdminPanelProvider extends PanelProvider
 
                 'register' => MenuItem::make()
                     ->visible(fn (): bool => auth()->user()->is_admin),
-            ])
-            ->userMenuItems([
-                // MenuItem::make()
-                //     ->label('Tenants')
-                //     ->url(fn (): string => Tenants::getUrl())
-                //     ->visible(fn () => auth()->user()->is_admin)
-                //     ->icon('heroicon-o-identification'),
+
+                MenuItem::make()
+                    ->label('Tenant List')
+                    ->url(fn (): string => Tenants::getUrl())
+                    ->visible(fn () => auth()->user()->is_admin)
+                    ->icon('heroicon-o-identification'),
             ]);
     }
 }

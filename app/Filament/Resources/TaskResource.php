@@ -36,18 +36,18 @@ class TaskResource extends Resource
                 Tables\Columns\TextColumn::make('name')
                     ->searchable(),
                 Tables\Columns\TextColumn::make('priority.name')
-                    ->sortable(),
+                    ->searchable(),
                 Tables\Columns\TextColumn::make('created_at')
                     ->dateTime()
-                    ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
                 Tables\Columns\TextColumn::make('updated_at')
                     ->dateTime()
-                    ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
             ])
             ->filters([
-                //
+                Tables\Filters\SelectFilter::make('priority_id')
+                    ->label('Priority')
+                    ->relationship('priority', 'name'),
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),

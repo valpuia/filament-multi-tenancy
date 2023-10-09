@@ -70,7 +70,7 @@ class AdminPanelProvider extends PanelProvider
                     ->visible(fn (): bool => auth()->user()->is_team_owner),
 
                 'register' => MenuItem::make()
-                    ->visible(fn (): bool => auth()->user()->is_team_owner && auth()->user()->is_admin),
+                    ->visible(fn (): bool => auth()->user()->is_admin),
             ]);
     }
 }

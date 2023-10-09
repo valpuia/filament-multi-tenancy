@@ -88,7 +88,7 @@ class Tenants extends Page implements HasTable
                     ->color('danger')
                     ->requiresConfirmation()
                     ->modalHeading('Delete tenant?')
-                    ->modalDescription('Deleting tenant will delete all data')
+                    ->modalDescription('Deleting tenant will delete all data as well')
                     ->action(function (Team $record) {
                         $record->members()->delete();
 

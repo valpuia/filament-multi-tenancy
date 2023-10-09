@@ -5,7 +5,10 @@ namespace App\Filament\Resources;
 use App\Filament\Resources\TenantRequestResource\Pages;
 use App\Models\Team;
 use App\Models\TenantRequest;
+use App\Models\User;
 use Filament\Forms;
+use Filament\Forms\Components\Grid;
+use Filament\Forms\Components\Placeholder;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Form;
 use Filament\Notifications\Notification;
@@ -51,23 +54,30 @@ class TenantRequestResource extends Resource
                 Tables\Columns\TextColumn::make('title')
                     ->searchable(),
                 Tables\Columns\TextColumn::make('user.name')
+                    ->label('Tenant name')
                     ->searchable(),
                 Tables\Columns\TextColumn::make('created_at')
                     ->dateTime(),
                 Tables\Columns\TextColumn::make('updated_at')
                     ->dateTime(),
             ])
-            ->filters([
-                //
-            ])
             ->actions([
                 Action::make('addToTeam')
+                    ->modalHeading('Add tenant to a team?')
+                    ->modalDescription('Adding tenant will clear this data!')
+                    ->icon('heroicon-o-user-plus')
                     ->form([
-                        Select::make('team_id')
-                            ->label('Team')
-                            ->options(Team::whereIsSuper(0)->pluck('name', 'id'))
-                            ->searchable()
-                            ->required(),
+                        Grid::make()
+                            ->schema([
+                                Placeholder::make('Tenant Name')
+                                    ->content(fn (TenantRequest $record): string => $record->user->name),
+
+                                Select::make('team_id')
+                                    ->label('Team')
+                                    ->options(Team::whereIsSuper(0)->pluck('name', 'id'))
+                                    ->searchable()
+                                    ->required(),
+                            ]),
                     ])
                     ->action(function (array $data, TenantRequest $record): void {
                         $team = Team::find($data['team_id']);
@@ -78,6 +88,22 @@ class TenantRequestResource extends Resource
 
                         Notification::make()
                             ->title('Added successfully to team '.$team->name)
+                            ->success()
+                            ->send();
+                    }),
+
+                Action::make('delete')
+                    ->icon('heroicon-o-trash')
+                    ->color('danger')
+                    ->requiresConfirmation()
+                    ->modalDescription('Deleting this request will delete user credentials as well')
+                    ->action(function (TenantRequest $record): void {
+                        User::find($record->user_id)->delete();
+
+                        $record->delete();
+
+                        Notification::make()
+                            ->title('Record and user deleted successfully')
                             ->success()
                             ->send();
                     }),

@@ -15,9 +15,13 @@ use Illuminate\Support\Str;
 
 class RegisterTeam extends RegisterTenant
 {
+    protected static string $view = 'filament.pages.tenancy.register-team';
+
     public static function getLabel(): string
     {
-        return 'Register tenant';
+        return auth()->user()->is_admin
+            ? 'Register Tenant'
+            : 'No Team found!';
     }
 
     public static function getSlug(): string

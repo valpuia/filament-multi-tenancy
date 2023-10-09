@@ -23,6 +23,7 @@ class DatabaseSeeder extends Seeder
         $team = Team::create([
             'name' => 'Admin',
             'slug' => 'admin',
+            'is_super' => true,
             'created_at' => now(),
             'updated_at' => now(),
         ]);

@@ -9,13 +9,15 @@ use App\Models\User;
 use Filament\Forms;
 use Filament\Forms\Components\Grid;
 use Filament\Forms\Components\Placeholder;
-use Filament\Forms\Components\Select;
 use Filament\Forms\Form;
+use Filament\Forms\Set;
 use Filament\Notifications\Notification;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Actions\Action;
 use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Support\Str;
 
 class TenantRequestResource extends Resource
 {
@@ -23,10 +25,7 @@ class TenantRequestResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
 
-    public static function shouldRegisterNavigation(): bool
-    {
-        return auth()->user()->is_admin;
-    }
+    protected static bool $shouldRegisterNavigation = false;
 
     public static function getNavigationBadge(): ?string
     {
@@ -72,11 +71,26 @@ class TenantRequestResource extends Resource
                                 Placeholder::make('Tenant Name')
                                     ->content(fn (TenantRequest $record): string => $record->user->name),
 
-                                Select::make('team_id')
+                                Forms\Components\Select::make('team_id')
                                     ->label('Team')
-                                    ->options(Team::whereIsSuper(0)->pluck('name', 'id'))
+                                    ->relationship('team', 'name', fn (Builder $query) => $query->whereIsSuper(false))
                                     ->searchable()
-                                    ->required(),
+                                    ->preload()
+                                    ->required()
+                                    ->createOptionForm([
+                                        Forms\Components\TextInput::make('name')
+                                            ->unique()
+                                            ->required()
+                                            ->live(onBlur: true)
+                                            ->afterStateUpdated(
+                                                fn (Set $set, ?string $state) => $set('slug', Str::slug($state))
+                                            ),
+
+                                        Forms\Components\TextInput::make('slug')
+                                            ->unique()
+                                            ->disabled()
+                                            ->dehydrated(),
+                                    ]),
                             ]),
                     ])
                     ->action(function (array $data, TenantRequest $record): void {

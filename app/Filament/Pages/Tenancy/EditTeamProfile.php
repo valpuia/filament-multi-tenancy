@@ -12,7 +12,7 @@ class EditTeamProfile extends EditTenantProfile
 {
     public static function getLabel(): string
     {
-        return 'Team profile';
+        return 'Edit tenant';
     }
 
     public function form(Form $form): Form

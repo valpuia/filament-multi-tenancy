@@ -4,6 +4,7 @@ namespace App\Providers\Filament;
 
 use App\Filament\Pages\Tenancy\EditTeamProfile;
 use App\Filament\Pages\Tenancy\RegisterTeam;
+use App\Filament\Pages\Tenants;
 use App\Http\Middleware\ApplyTenantScopes;
 use App\Models\Team;
 use Filament\Http\Middleware\Authenticate;
@@ -71,6 +72,14 @@ class AdminPanelProvider extends PanelProvider
 
                 'register' => MenuItem::make()
                     ->visible(fn (): bool => auth()->user()->is_admin),
+            ])
+            ->userMenuItems([
+                MenuItem::make()
+                    ->label('Tenants')
+                    ->url(fn (): string => Tenants::getUrl())
+                    ->visible(fn () => auth()->user()->is_admin)
+                    ->icon('heroicon-o-identification'),
+                // ...
             ]);
     }
 }

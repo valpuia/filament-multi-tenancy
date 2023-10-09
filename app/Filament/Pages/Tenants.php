@@ -3,6 +3,10 @@
 namespace App\Filament\Pages;
 
 use App\Models\Team;
+use App\Models\User;
+use Filament\Forms\Components\Checkbox;
+use Filament\Forms\Components\Grid;
+use Filament\Forms\Components\TextInput;
 use Filament\Notifications\Notification;
 use Filament\Pages\Page;
 use Filament\Tables\Actions\Action;
@@ -10,6 +14,7 @@ use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Concerns\InteractsWithTable;
 use Filament\Tables\Contracts\HasTable;
 use Filament\Tables\Table;
+use Illuminate\Support\Facades\DB;
 
 class Tenants extends Page implements HasTable
 {
@@ -42,10 +47,42 @@ class Tenants extends Page implements HasTable
             ])
             ->striped()
             ->defaultSort('created_at', 'desc')
-            ->filters([
-                // ...
-            ])
             ->actions([
+                Action::make('addNewMember')
+                    ->icon('heroicon-o-user-plus')
+                    ->modalHeading(fn (Team $team) => 'Add new member to '.$team->name)
+                    ->form([
+                        Grid::make()
+                            ->schema([
+                                TextInput::make('name')
+                                    ->required(),
+
+                                TextInput::make('email')
+                                    ->unique(table: User::class)
+                                    ->required()
+                                    ->email(),
+
+                                TextInput::make('password')
+                                    ->required()
+                                    ->password(),
+
+                                Checkbox::make('is_team_owner'),
+                            ]),
+                    ])
+                    ->action(function (array $data, Team $record): void {
+                        $user = User::create($data);
+
+                        DB::table('team_user')->insert([
+                            'team_id' => $record->id,
+                            'user_id' => $user->id,
+                        ]);
+
+                        Notification::make()
+                            ->title('Members added to '.$record->name)
+                            ->success()
+                            ->send();
+                    }),
+
                 Action::make('delete')
                     ->icon('heroicon-o-trash')
                     ->color('danger')
@@ -64,9 +101,6 @@ class Tenants extends Page implements HasTable
                             ->success()
                             ->send();
                     }),
-            ])
-            ->bulkActions([
-                // ...
             ]);
     }
 }
